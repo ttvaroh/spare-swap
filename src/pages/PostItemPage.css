@@ -1,0 +1,256 @@
+.post-item-page {
+  min-height: 100vh;
+  background-color: var(--purdue-white);
+}
+
+.post-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 40px;
+  padding: 40px 0;
+}
+
+.form-section h2 {
+  color: var(--purdue-black);
+  font-size: 2em;
+  margin-bottom: 32px;
+}
+
+.post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: var(--purdue-black);
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.upload-area {
+  border: 3px dashed var(--purdue-gray);
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  background-color: var(--purdue-light-gray);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.upload-area:hover,
+.upload-area.drag-active {
+  border-color: var(--purdue-gold);
+  background-color: rgba(206, 184, 136, 0.1);
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--purdue-gray);
+}
+
+.upload-content svg {
+  opacity: 0.6;
+}
+
+.upload-link {
+  color: var(--purdue-gold);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.upload-hint {
+  font-size: 0.9em;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.uploaded-file {
+  color: var(--purdue-black);
+  font-weight: 600;
+  margin: 8px 0 0 0;
+}
+
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+select {
+  border: 2px solid var(--purdue-gray);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1em;
+  font-family: inherit;
+  background-color: var(--purdue-white);
+  color: var(--purdue-black);
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--purdue-gold);
+}
+
+.submit-btn {
+  margin-top: 20px;
+  padding: 16px 32px;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* Preview Section */
+.preview-section {
+  position: sticky;
+  top: 40px;
+  height: fit-content;
+}
+
+.preview-section h3 {
+  color: var(--purdue-black);
+  font-size: 1.4em;
+  margin-bottom: 20px;
+}
+
+.preview-card {
+  background-color: var(--purdue-white);
+  border: 2px solid var(--purdue-light-gray);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preview-image {
+  width: 100%;
+  height: 120px;
+  background-color: var(--purdue-light-gray);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--purdue-gray);
+  opacity: 0.5;
+}
+
+.preview-content h4 {
+  color: var(--purdue-black);
+  font-size: 1.3em;
+  margin: 0 0 12px 0;
+  font-weight: bold;
+}
+
+.preview-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.preview-description {
+  color: var(--purdue-gray);
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+  font-size: 0.95em;
+}
+
+.ai-suggestion {
+  background-color: var(--purdue-light-gray);
+  border: 1px solid var(--purdue-gold);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ai-icon {
+  color: var(--purdue-gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ai-suggestion p {
+  margin: 0;
+  font-size: 0.9em;
+  font-style: italic;
+  color: var(--purdue-black);
+  line-height: 1.4;
+}
+
+.loan-terms {
+  padding-top: 16px;
+  border-top: 1px solid var(--purdue-light-gray);
+}
+
+.loan-terms strong {
+  color: var(--purdue-black);
+  font-size: 0.9em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.loan-terms p {
+  color: var(--purdue-gray);
+  font-size: 0.9em;
+  line-height: 1.4;
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .post-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .preview-section {
+    position: static;
+    order: -1;
+  }
+  
+  .preview-card {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .post-layout {
+    padding: 20px 0;
+  }
+  
+  .form-section h2 {
+    font-size: 1.6em;
+  }
+  
+  .upload-area {
+    padding: 30px 20px;
+  }
+}

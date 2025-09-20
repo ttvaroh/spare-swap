@@ -1,0 +1,282 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.meetup-modal {
+  background-color: var(--purdue-white);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  background-color: var(--purdue-gold);
+  color: var(--purdue-black);
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 16px 16px 0 0;
+}
+
+.modal-header h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--purdue-black);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.modal-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.suggestions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.suggestion-card {
+  background-color: var(--purdue-white);
+  border: 2px solid var(--purdue-light-gray);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.suggestion-card:hover {
+  border-color: var(--purdue-gold);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-card.selected {
+  border-color: var(--purdue-gold);
+  background-color: rgba(206, 184, 136, 0.1);
+  box-shadow: 0 4px 12px rgba(206, 184, 136, 0.3);
+}
+
+.suggestion-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.suggestion-icon {
+  color: var(--purdue-gold);
+  flex-shrink: 0;
+  padding: 8px;
+  background-color: rgba(206, 184, 136, 0.1);
+  border-radius: 8px;
+}
+
+.suggestion-info h3 {
+  color: var(--purdue-black);
+  font-size: 1.2em;
+  margin: 0 0 4px 0;
+  font-weight: bold;
+}
+
+.full-name {
+  color: var(--purdue-gray);
+  font-size: 0.9em;
+  margin: 0;
+}
+
+.suggestion-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.detail-label {
+  color: var(--purdue-black);
+  font-weight: 600;
+  font-size: 0.9em;
+  min-width: 80px;
+}
+
+.detail-value {
+  color: var(--purdue-gray);
+  font-size: 0.9em;
+  text-align: right;
+  flex: 1;
+}
+
+.suggestion-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.feature-tag {
+  background-color: var(--purdue-light-gray);
+  color: var(--purdue-black);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 500;
+}
+
+.suggestion-card.selected .feature-tag {
+  background-color: var(--purdue-gold);
+}
+
+.ai-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background-color: var(--purdue-light-gray);
+  border: 1px solid var(--purdue-gold);
+  border-radius: 12px;
+  margin-top: 24px;
+}
+
+.ai-icon {
+  color: var(--purdue-gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ai-message p {
+  margin: 0;
+  color: var(--purdue-black);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.modal-footer {
+  padding: 20px 24px;
+  border-top: 1px solid var(--purdue-light-gray);
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.cancel-btn {
+  padding: 12px 24px;
+}
+
+.confirm-btn {
+  padding: 12px 24px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.confirm-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(206, 184, 136, 0.4);
+}
+
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 10px;
+  }
+  
+  .meetup-modal {
+    max-height: 95vh;
+  }
+  
+  .modal-header {
+    padding: 16px 20px;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.3em;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .suggestion-header {
+    gap: 12px;
+  }
+  
+  .suggestion-icon {
+    padding: 6px;
+  }
+  
+  .suggestion-info h3 {
+    font-size: 1.1em;
+  }
+  
+  .modal-footer {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  
+  .cancel-btn,
+  .confirm-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .suggestion-details {
+    gap: 6px;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .detail-value {
+    text-align: left;
+  }
+  
+  .suggestion-card {
+    padding: 16px;
+  }
+  
+  .ai-message {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

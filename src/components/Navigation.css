@@ -1,0 +1,86 @@
+.wireframe-nav {
+  background: linear-gradient(135deg, var(--purdue-black) 0%, #333 100%);
+  border-bottom: 3px solid var(--purdue-gold);
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-logo {
+  color: var(--purdue-gold);
+  font-size: 1.4em;
+  font-weight: bold;
+  letter-spacing: -0.5px;
+}
+
+.nav-subtitle {
+  color: var(--purdue-white);
+  font-size: 0.7em;
+  opacity: 0.8;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-link {
+  color: var(--purdue-white);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.nav-link:hover {
+  background-color: rgba(206, 184, 136, 0.1);
+  border-color: var(--purdue-gold);
+  color: var(--purdue-gold);
+}
+
+.nav-link.active {
+  background-color: var(--purdue-gold);
+  color: var(--purdue-black);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+  
+  .nav-link {
+    padding: 6px 12px;
+    font-size: 0.85em;
+  }
+}

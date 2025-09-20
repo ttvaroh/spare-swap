@@ -1,0 +1,176 @@
+.home-page {
+  min-height: 100vh;
+  background-color: var(--purdue-white);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.search-container {
+  flex: 1;
+  max-width: 500px;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 50px 12px 16px;
+  border: 2px solid var(--purdue-gray);
+  border-radius: 25px;
+  font-size: 1em;
+  background-color: var(--purdue-white);
+  color: var(--purdue-black);
+}
+
+.search-input:focus {
+  border-color: var(--purdue-gold);
+}
+
+.search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--purdue-gray);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+  color: var(--purdue-gold);
+  background-color: var(--purdue-light-gray);
+}
+
+.main-content {
+  padding: 40px 0;
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  padding: 0;
+}
+
+.item-card {
+  background-color: var(--purdue-white);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.item-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.item-image {
+  width: 100%;
+  height: 200px;
+  background-color: var(--purdue-light-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-image {
+  color: var(--purdue-gray);
+  opacity: 0.5;
+}
+
+.item-content {
+  padding: 20px;
+}
+
+.item-title {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: var(--purdue-black);
+  margin: 0 0 12px 0;
+}
+
+.item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  background-color: var(--purdue-gold);
+  color: var(--purdue-black);
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.8em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.item-description {
+  color: var(--purdue-gray);
+  font-size: 0.9em;
+  line-height: 1.4;
+  margin: 0 0 16px 0;
+}
+
+.item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-owner {
+  color: var(--purdue-gray);
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 0.9em;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .search-container {
+    max-width: 100%;
+  }
+  
+  .items-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .logo {
+    font-size: 1.5em;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 20px 0;
+  }
+  
+  .item-content {
+    padding: 16px;
+  }
+  
+  .item-title {
+    font-size: 1.1em;
+  }
+}
