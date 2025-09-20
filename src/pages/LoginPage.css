@@ -1,64 +1,136 @@
 .login-page {
   min-height: 100vh;
-  background-color: var(--purdue-white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: linear-gradient(135deg, var(--purdue-white) 0%, #fafafa 100%);
   position: relative;
+  overflow-x: hidden;
 }
 
 .login-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 900px;
+  margin: 0 auto;
   padding: 0 20px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-.login-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+/* Animations */
+.fade-in {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 60px 0;
   text-align: center;
-  padding: 40px 0;
+}
+
+.hero-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.brand-section {
+  margin-bottom: 40px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.logo-icon {
+  color: var(--purdue-gold);
+  padding: 12px;
+  background: rgba(206, 184, 136, 0.1);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .app-title {
-  font-size: 3.5em;
-  font-weight: bold;
+  font-size: 3.2em;
+  font-weight: 800;
   color: var(--purdue-black);
-  margin-bottom: 8px;
-  letter-spacing: -1px;
+  margin: 0;
+  letter-spacing: -2px;
+}
+
+.app-tagline {
+  font-size: 1.3em;
+  color: var(--purdue-gold);
+  font-weight: 600;
+  margin: 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .app-subtitle {
   font-size: 1.1em;
   color: var(--purdue-gray);
-  margin-bottom: 60px;
+  margin: 0 0 40px 0;
   font-weight: 400;
+  line-height: 1.5;
 }
 
-.login-form {
-  width: 100%;
-  max-width: 300px;
+.auth-section {
+  max-width: 350px;
+  margin: 0 auto;
 }
 
 .login-btn {
   width: 100%;
-  padding: 16px 24px;
+  padding: 18px 24px;
   font-size: 1.1em;
   font-weight: 600;
-  margin-bottom: 20px;
-  border-radius: 12px;
+  margin-bottom: 16px;
+  border-radius: 50px;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.login-btn:hover::before {
+  left: 100%;
 }
 
 .login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(206, 184, 136, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(206, 184, 136, 0.4);
 }
 
 .login-help {
@@ -66,6 +138,158 @@
   color: var(--purdue-gray);
   line-height: 1.4;
   margin: 0;
+  font-weight: 500;
+}
+
+/* Stats Section */
+.stats-section {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 50px;
+  padding: 30px 0;
+  border-top: 1px solid rgba(206, 184, 136, 0.2);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2.5em;
+  font-weight: 800;
+  color: var(--purdue-gold);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.9em;
+  color: var(--purdue-gray);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Features Section */
+.features-section {
+  padding: 60px 0;
+  text-align: center;
+}
+
+.features-section h2 {
+  font-size: 2.2em;
+  color: var(--purdue-black);
+  margin-bottom: 40px;
+  font-weight: 700;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: var(--purdue-white);
+  padding: 30px 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(206, 184, 136, 0.1);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  border-color: var(--purdue-gold);
+}
+
+.feature-icon {
+  font-size: 2.5em;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.feature-card h3 {
+  font-size: 1.3em;
+  color: var(--purdue-black);
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.feature-card p {
+  color: var(--purdue-gray);
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.95em;
+}
+
+/* Testimonial Section */
+.testimonial-section {
+  padding: 40px 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.testimonial-card {
+  background: var(--purdue-white);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--purdue-gold);
+  position: relative;
+}
+
+.testimonial-card::before {
+  content: '"';
+  font-size: 4em;
+  color: var(--purdue-gold);
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  font-family: serif;
+  opacity: 0.3;
+}
+
+.testimonial-content p {
+  font-size: 1.1em;
+  color: var(--purdue-black);
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.author-avatar {
+  width: 50px;
+  height: 50px;
+  background: var(--purdue-gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--purdue-black);
+  font-size: 1.1em;
+}
+
+.author-name {
+  font-weight: 600;
+  color: var(--purdue-black);
+  margin-bottom: 2px;
+}
+
+.author-title {
+  color: var(--purdue-gray);
+  font-size: 0.9em;
 }
 
 .skyline-footer {
@@ -79,17 +303,70 @@
   height: 100%;
 }
 
-@media (max-width: 480px) {
-  .app-title {
-    font-size: 2.8em;
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 40px 0;
   }
   
-  .login-content {
-    padding: 20px 0;
+  .app-title {
+    font-size: 2.5em;
+  }
+  
+  .app-tagline {
+    font-size: 1.1em;
+  }
+  
+  .stats-section {
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  
+  .stat-number {
+    font-size: 2em;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .feature-card {
+    padding: 25px 20px;
+  }
+  
+  .testimonial-section {
+    padding: 30px 0;
+  }
+  
+  .testimonial-card {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 0 16px;
+  }
+  
+  .app-title {
+    font-size: 2.2em;
   }
   
   .login-btn {
     font-size: 1em;
-    padding: 14px 20px;
+    padding: 16px 20px;
+  }
+  
+  .stats-section {
+    gap: 20px;
+  }
+  
+  .features-section h2 {
+    font-size: 1.8em;
+  }
+  
+  .testimonial-content p {
+    font-size: 1em;
   }
 }
