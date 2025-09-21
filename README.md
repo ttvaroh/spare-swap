@@ -1,12 +1,31 @@
-# React + Vite
+# 🔧 Spare Swap
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[Spare Swap](https://spare-swap.netlify.app/) is a web application that helps students connect and share spare parts, tools, and components. Built with modern web technologies, it provides a simple and efficient way to list, request, and swap items.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📦 Tech Stack
 
-## Expanding the ESLint configuration
+- **Vite** – Lightning fast development build tool
+- **React** – Frontend library for building UI components
+- **Tailwind CSS** – Utility-first CSS framework for styling
+- **Supabase** – Backend as a service (Postgres, Auth, Storage, Realtime)
+- **OpenAI API** – AI-powered features for smarter item descriptions and search
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🔑 Features
+
+- ✅ User authentication & profiles via Supabase  
+- ✅ Real-time listings and updates  
+- ✅ Responsive design with Tailwind CSS  
+- ✅ AI-powered item descriptions & recommendations using OpenAI  
+- ✅ Fast builds and hot-reload dev server with Vite  
+
+---
+
+## 🚀 Deployment
+
+The app is live at: [https://spare-swap.netlify.app/](https://spare-swap.netlify.app/)  
+
+---

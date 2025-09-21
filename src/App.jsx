@@ -10,22 +10,51 @@ import Listing from './pages/Listing'
 import ChatBot from './pages/ChatBot'
 import Messages from './pages/Messages'
 import EditListing from './pages/EditListing'
+import ProtectedRoute from './components/ProtectedRoute'
 
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<MainLayout />}>
-        <Route index element={<Home />} />
+        <Route index element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        } />
         <Route path="auth" element={<AuthScreen />} />
         <Route path="signin" element={<AuthScreen />} />
-        <Route path="create-listing" element={<CreateListing />} />
-        <Route path="my-items" element={<MyItems />} />
-        <Route path="messages" element={<Messages />} />
+        <Route path="create-listing" element={
+          <ProtectedRoute>
+            <CreateListing />
+          </ProtectedRoute>
+        } />
+        <Route path="my-items" element={
+          <ProtectedRoute>
+            <MyItems />
+          </ProtectedRoute>
+        } />
+        <Route path="messages" element={
+          <ProtectedRoute>
+            <Messages />
+          </ProtectedRoute>
+        } />
         <Route path="listing/:id" element={<Listing />} />
-        <Route path="edit-listing/:id" element={<EditListing />} />
-        <Route path="chatbot" element={<ChatBot />} />
-        <Route path="*" element={<Home />} />
+        <Route path="edit-listing/:id" element={
+          <ProtectedRoute>
+            <EditListing />
+          </ProtectedRoute>
+        } />
+        <Route path="chatbot" element={
+          <ProtectedRoute>
+            <ChatBot />
+          </ProtectedRoute>
+        } />
+        <Route path="*" element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        } />
       </Route>
     )
   )

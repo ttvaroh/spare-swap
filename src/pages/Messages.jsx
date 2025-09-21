@@ -10,84 +10,14 @@ const Messages = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
+  const activeSubscriptions = useRef(new Set());
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  useEffect(() => {
-    if (!selectedRequest) return;
-  
-    const fetchMessages = async () => {
-      const { data, error } = await supabase
-        .from("messages")
-        .select("*")
-        .eq("request_id", selectedRequest.id)
-        .order("created_at", { ascending: true });
-  
-      if (error) {
-        console.error("Error fetching messages:", error);
-      }
-      setMessages(data || []);
-    };
-  
-    // Set up real-time subscription FIRST
-    const subscription = supabase
-      .channel(`messages-${selectedRequest.id}-${Date.now()}`) // Unique channel name
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "messages",
-          filter: `request_id=eq.${selectedRequest.id}`,
-        },
-        (payload) => {
-          console.log("📨 Real-time message update:", payload);
-  
-          if (payload.eventType === "INSERT") {
-            setMessages((current) => [...current, payload.new]);
-          } else if (payload.eventType === "UPDATE") {
-            setMessages((current) =>
-              current.map((msg) =>
-                msg.id === payload.new.id ? payload.new : msg
-              )
-            );
-          } else if (payload.eventType === "DELETE") {
-            setMessages((current) =>
-              current.filter((msg) => msg.id !== payload.old.id)
-            );
-          }
-        }
-      )
-      .subscribe((status) => {
-        console.log("Subscription status:", status);
-        
-        // Only fetch messages after subscription is ready
-        if (status === 'SUBSCRIBED') {
-          fetchMessages();
-        }
-      });
-  
-    return () => {
-      console.log("🧹 Cleaning up real-time subscription");
-      supabase.removeChannel(subscription);
-    };
-  }, [selectedRequest]);
-
-  useEffect(() => {
-    if (!selectedRequest) return;
-  
-    const setupMessaging = async () => {
-      // Small delay to ensure clean state
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Rest of your subscription code...
-    };
-  
-    setupMessaging();
-  }, [selectedRequest]);
 
   useEffect(() => {
     scrollToBottom();
@@ -184,7 +114,12 @@ const Messages = () => {
 
   // Fetch messages for the selected request with real-time updates
   useEffect(() => {
-    if (!selectedRequest) return;
+    if (!selectedRequest) {
+      setMessages([]);
+      return;
+    }
+
+    let subscription = null;
 
     const fetchMessages = async () => {
       const { data, error } = await supabase
@@ -204,71 +139,186 @@ const Messages = () => {
     // Initial fetch
     fetchMessages();
 
-    // Set up real-time subscription
-    const subscription = supabase
-      .channel(`messages:${selectedRequest.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "messages",
-          filter: `request_id=eq.${selectedRequest.id}`,
-        },
-        (payload) => {
-          console.log("📨 Real-time message update:", payload);
+    // Set up real-time subscription with deduplication
+    const setupSubscription = async () => {
+      try {
+        subscription = supabase
+          .channel(`messages:${selectedRequest.id}`, {
+            config: {
+              presence: {
+                key: selectedRequest.id,
+              },
+            },
+          })
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "messages",
+              filter: `request_id=eq.${selectedRequest.id}`,
+            },
+            (payload) => {
+              console.log("📨 Real-time message update:", payload);
 
-          if (payload.eventType === "INSERT") {
-            // Add new message to the list
-            setMessages((current) => [...current, payload.new]);
-          } else if (payload.eventType === "UPDATE") {
-            // Update existing message
-            setMessages((current) =>
-              current.map((msg) =>
-                msg.id === payload.new.id ? payload.new : msg
-              )
-            );
-          } else if (payload.eventType === "DELETE") {
-            // Remove deleted message
-            setMessages((current) =>
-              current.filter((msg) => msg.id !== payload.old.id)
-            );
-          }
-        }
-      )
-      .subscribe();
+              if (payload.eventType === "INSERT") {
+                // Add new message with enhanced deduplication
+                setMessages((current) => {
+                  const newMessage = payload.new;
+                  
+                  // Check if message already exists by ID
+                  const existsById = current.some(msg => msg.id === newMessage.id);
+                  if (existsById) {
+                    console.log("🔄 Message already exists by ID, skipping duplicate:", newMessage.id);
+                    return current;
+                  }
+                  
+                  // Additional check: if it's a message from the current user with same content and recent timestamp
+                  const isFromCurrentUser = newMessage.sender_id === userId;
+                  const recentMessage = current.find(msg => 
+                    msg.sender_id === newMessage.sender_id &&
+                    msg.message === newMessage.message &&
+                    msg.request_id === newMessage.request_id &&
+                    Math.abs(new Date(msg.created_at) - new Date(newMessage.created_at)) < 5000 // Within 5 seconds
+                  );
+                  
+                  if (recentMessage) {
+                    console.log("🔄 Similar recent message found, skipping duplicate:", {
+                      existing: recentMessage.id,
+                      new: newMessage.id
+                    });
+                    return current;
+                  }
+                  
+                  // Remove any optimistic messages with the same content from current user
+                  const filteredCurrent = current.filter(msg => 
+                    !(msg.isOptimistic && 
+                      msg.sender_id === newMessage.sender_id && 
+                      msg.message === newMessage.message)
+                  );
+                  
+                  if (filteredCurrent.length !== current.length) {
+                    console.log("🧹 Removed optimistic message, adding real message");
+                    return [...filteredCurrent, newMessage];
+                  }
+                  
+                  console.log("✅ Adding new message:", newMessage.id);
+                  return [...current, newMessage];
+                });
+              } else if (payload.eventType === "UPDATE") {
+                // Update existing message
+                setMessages((current) =>
+                  current.map((msg) =>
+                    msg.id === payload.new.id ? payload.new : msg
+                  )
+                );
+              } else if (payload.eventType === "DELETE") {
+                // Remove deleted message
+                setMessages((current) =>
+                  current.filter((msg) => msg.id !== payload.old.id)
+                );
+              }
+            }
+          )
+          .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+              console.log("✅ Successfully subscribed to messages");
+              activeSubscriptions.current.add(subscription);
+            } else if (status === 'CHANNEL_ERROR') {
+              console.error("❌ Error subscribing to messages");
+            } else if (status === 'TIMED_OUT') {
+              console.error("⏰ Subscription timed out");
+            } else if (status === 'CLOSED') {
+              console.log("🔒 Subscription closed");
+              activeSubscriptions.current.delete(subscription);
+            }
+          });
+      } catch (error) {
+        console.error("Error setting up subscription:", error);
+      }
+    };
+
+    setupSubscription();
 
     // Cleanup subscription when component unmounts or selectedRequest changes
     return () => {
       console.log("🧹 Cleaning up real-time subscription");
-      supabase.removeChannel(subscription);
+      if (subscription) {
+        subscription.unsubscribe();
+        activeSubscriptions.current.delete(subscription);
+        subscription = null;
+      }
     };
   }, [selectedRequest]);
 
+  // Cleanup all subscriptions on component unmount
+  useEffect(() => {
+    return () => {
+      console.log("🧹 Component unmounting, cleaning up all subscriptions");
+      activeSubscriptions.current.forEach(subscription => {
+        if (subscription) {
+          subscription.unsubscribe();
+        }
+      });
+      activeSubscriptions.current.clear();
+    };
+  }, []);
+
   // Handle sending a new message
   const sendMessage = async () => {
-    if (!newMessage.trim() || !selectedRequest) return;
+    if (!newMessage.trim() || !selectedRequest || sending) return;
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    const senderId = session.user.id;
+    setSending(true);
+    const messageText = newMessage.trim();
+    setNewMessage(""); // Clear input immediately
 
-    const { error } = await supabase.from("messages").insert([
-      {
-        request_id: selectedRequest.id,
-        sender_id: senderId,
-        message: newMessage.trim(),
-      },
-    ]);
+    // Create a temporary message ID to track this specific message
+    const tempMessageId = `temp_${Date.now()}_${Math.random()}`;
+    
+    // Add optimistic update to prevent duplicates
+    const optimisticMessage = {
+      id: tempMessageId,
+      request_id: selectedRequest.id,
+      sender_id: userId,
+      message: messageText,
+      created_at: new Date().toISOString(),
+      isOptimistic: true
+    };
 
-    if (error) {
+    // Add optimistic message immediately
+    setMessages(current => [...current, optimisticMessage]);
+
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const senderId = session.user.id;
+
+      const { data, error } = await supabase.from("messages").insert([
+        {
+          request_id: selectedRequest.id,
+          sender_id: senderId,
+          message: messageText,
+        },
+      ]).select().single();
+
+      if (error) {
+        console.error("Error sending message:", error);
+        // Remove optimistic message on error
+        setMessages(current => current.filter(msg => msg.id !== tempMessageId));
+        setNewMessage(messageText); // Restore message on error
+      } else {
+        console.log("✅ Message sent successfully:", data);
+        // Remove optimistic message since real message will come through subscription
+        setMessages(current => current.filter(msg => msg.id !== tempMessageId));
+      }
+    } catch (error) {
       console.error("Error sending message:", error);
-    } else {
-      console.log("✅ Message sent successfully");
-      setNewMessage("");
-      // Note: The real-time subscription will automatically add the message to the UI
-      // No need to manually update the messages state here
+      // Remove optimistic message on error
+      setMessages(current => current.filter(msg => msg.id !== tempMessageId));
+      setNewMessage(messageText); // Restore message on error
+    } finally {
+      setSending(false);
     }
   };
 
@@ -584,15 +634,15 @@ const Messages = () => {
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
                     className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CFB991] focus:border-transparent"
-                    placeholder="Type a message..."
-                    disabled={!selectedRequest}
+                    placeholder={sending ? "Sending..." : "Type a message..."}
+                    disabled={!selectedRequest || sending}
                   />
                   <button
                     onClick={sendMessage}
-                    disabled={!newMessage.trim() || !selectedRequest}
+                    disabled={!newMessage.trim() || !selectedRequest || sending}
                     className="bg-[#CFB991] hover:bg-[#b8a882] disabled:bg-gray-300 disabled:cursor-not-allowed px-6 py-3 rounded-lg font-semibold text-gray-800 transition-colors"
                   >
-                    Send
+                    {sending ? "Sending..." : "Send"}
                   </button>
                 </div>
               </div>
