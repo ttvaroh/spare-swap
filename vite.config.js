@@ -1,13 +1,29 @@
+// vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // Remove the ngrok allowedHosts for production
   server: {
-    allowedHosts: [
-        '5202d572d86d.ngrok-free.app'
-      ],
+    // Only add allowedHosts in development if needed
+    ...(process.env.NODE_ENV === 'development' && {
+      allowedHosts: ['5202d572d86d.ngrok-free.app']
+    })
   }
 })
+
+// import { defineConfig } from 'vite'
+// import react from '@vitejs/plugin-react'
+// import tailwindcss from '@tailwindcss/vite'
+
+// // https://vite.dev/config/
+// export default defineConfig({
+//   plugins: [react(), tailwindcss()],
+//   server: {
+//     allowedHosts: [
+//         '5202d572d86d.ngrok-free.app'
+//       ],
+//   }
+// })

@@ -24,8 +24,15 @@ function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold text-black">
-              <span className="text-[#cfb991]">Spare</span>Swap
+            <Link to="/" className="flex items-center space-x-3">
+              <img 
+                src="/logo.png" 
+                alt="SpareSwap Logo" 
+                className="h-8 w-8 object-contain"
+              />
+              <span className="text-2xl font-bold text-black">
+                <span className="text-[#cfb991]">Spare</span>Swap
+              </span>
             </Link>
           </div>
 
