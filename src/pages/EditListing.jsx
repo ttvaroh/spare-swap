@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CloudArrowUpIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { supabase } from "../supabaseClient";
-import { useAuth } from "../lib/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const EditListingPage = () => {
   const { id } = useParams();

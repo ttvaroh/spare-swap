@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ItemsGrid from '../components/ItemsGrid';
 import SearchBar from '../components/SearchBar';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function AuthPage() {
   const [email, setEmail] = useState('');

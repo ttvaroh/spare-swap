@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { ArrowLeftIcon, UserIcon, CalendarIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 const ListingPage = () => {

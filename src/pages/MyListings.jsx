@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import SearchBar from "../components/SearchBar";
 import ItemCard from "../components/ItemCard";
 
-const MyItems = () => {
+const MyListingPage = () => {
   const { user, isAuthenticated } = useAuth();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,9 +33,8 @@ const MyItems = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from("listings")
-        .select("id, title, image, tags, owner, description, owner_id, status")
-        .eq("owner_id", user.id)
-        .neq("status", "swapped");
+        .select("id, title, image, tags, owner, description, owner_id")
+        .eq("owner_id", user.id);
 
       if (error) {
         console.error("Error fetching user listings:", error);
@@ -46,17 +45,6 @@ const MyItems = () => {
     };
 
     fetchUserItems();
-
-    // Refresh data when user returns to this page
-    const handleFocus = () => {
-      fetchUserItems();
-    };
-
-    window.addEventListener('focus', handleFocus);
-    
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-    };
   }, [user, isAuthenticated]);
 
   // Show login prompt if not authenticated
@@ -65,7 +53,7 @@ const MyItems = () => {
       <div className="min-h-screen bg-gradient-to-br from-[#c28e0e] via-[#ceb888] to-[#000000] flex items-center justify-center">
         <div className="text-center text-white">
           <h2 className="text-2xl font-bold mb-4">Please Sign In</h2>
-          <p className="text-lg">You need to be logged in to view your Items.</p>
+          <p className="text-lg">You need to be logged in to view your listings.</p>
         </div>
       </div>
     );
@@ -77,7 +65,7 @@ const MyItems = () => {
         <div className="max-w-7xl mx-auto">
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">My Items</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">My Listings</h1>
             <p className="text-gray-200">Manage your shared items</p>
           </div>
 
@@ -87,10 +75,10 @@ const MyItems = () => {
           />
 
           {loading ? (
-            <p className="text-center text-gray-300 mt-10">Loading your items...</p>
+            <p className="text-center text-gray-300 mt-10">Loading your listings...</p>
           ) : items.length === 0 ? (
             <div className="text-center text-gray-300 mt-10">
-              <p className="text-xl mb-4">No items yet</p>
+              <p className="text-xl mb-4">No listings yet</p>
               <p className="text-lg">Start sharing items by creating your first listing!</p>
             </div>
           ) : filteredItems.length === 0 ? (
@@ -123,4 +111,4 @@ const MyItems = () => {
   );
 };
 
-export default MyItems;
+export default MyListingPage;
