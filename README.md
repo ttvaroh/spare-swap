@@ -16,16 +16,6 @@
 
 ---
 
-## 🔑 Features
-
-- ✅ User authentication & profiles via Supabase  
-- ✅ Real-time listings, updates, and messaging  
-- ✅ Responsive design with Tailwind CSS  
-- ✅ AI-powered item descriptions & recommendations using OpenAI  
-- ✅ Fast builds and hot-reload dev server with Vite  
-
----
-
 ## 🚀 Features
 
 * **Authentication** – Secure sign in with email (Purdue-specific login supported).
