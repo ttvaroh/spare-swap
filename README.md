@@ -1,6 +1,6 @@
 # 🔧 Spare Swap
 
-[Spare Swap](https://spare-swap.netlify.app/) is a web application that helps students connect and share spare parts, tools, and components. Built with modern web technologies, it provides a simple and efficient way to list, request, and swap items.
+[Spare Swap](https://spare-swap.netlify.app/) is a Purdue-themed web application that allows students to list, browse, and request spare engineering parts such as resistors, breadboards, Arduino boards, and more. The platform includes authentication, item management, messaging between users, and an AI-powered assistant to help students with project ideas. Built with modern web technologies, it provides a simple and efficient way to list, request, and swap items.
 
 [![Spare Swap Screenshot](./public/home-screen.png)](https://spare-swap.netlify.app/)
 
@@ -26,11 +26,52 @@
 
 ---
 
-## 🚀 Deployment
+## 🚀 Features
 
-The app is live at: [https://spare-swap.netlify.app/](https://spare-swap.netlify.app/)  
-
-You can also deploy to [Netlify](https://www.netlify.com/), [Vercel](https://vercel.com/), or any static hosting provider.  
-Remember to add your `.env` variables in your hosting dashboard.
+* **Authentication** – Secure sign in with email (Purdue-specific login supported).
+* **Listings** – Create, browse, and manage spare parts listings with images, descriptions, and tags.
+* **Search & Filters** – Quickly search for available items by keywords or tags.
+* **Messaging System** – Request items and chat with other students to coordinate exchanges.
+* **My Items Dashboard** – Manage your own listings and track requests.
+* **SpareSwap Assistant** – AI-powered project assistant that helps generate ideas for using spare parts.
 
 ---
+
+## 🛠️ Tech Stack
+
+* **Frontend**: [React](https://react.dev/) with [Vite](https://vitejs.dev/)
+* **Database & Auth**: [Supabase](https://supabase.com/)
+* **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+* **Deployment**: Works with services like Netlify or Vercel
+
+---
+
+## Screens
+* **📸 Screenshots**
+
+* **🔐 Authentication**
+
+* **📦 Browse Items**
+
+* **➕ Create Listing**
+
+* **📂 My Items**
+
+* **💬 Messaging**
+
+* **🤖 SpareSwap Assistant**
+
+---
+
+## 🔮 Future Improvements
+
+* Add real-time notifications for new requests and messages.
+* Mobile-first UI optimization.
+* Rating system for reliable swappers.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please fork this repository and submit a pull request with your improvements.
+
