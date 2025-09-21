@@ -33,8 +33,9 @@ const MyItems = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from("listings")
-        .select("id, title, image, tags, owner, description, owner_id")
-        .eq("owner_id", user.id);
+        .select("id, title, image, tags, owner, description, owner_id, status")
+        .eq("owner_id", user.id)
+        .neq("status", "swapped");
 
       if (error) {
         console.error("Error fetching user listings:", error);
@@ -45,6 +46,17 @@ const MyItems = () => {
     };
 
     fetchUserItems();
+
+    // Refresh data when user returns to this page
+    const handleFocus = () => {
+      fetchUserItems();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
   }, [user, isAuthenticated]);
 
   // Show login prompt if not authenticated

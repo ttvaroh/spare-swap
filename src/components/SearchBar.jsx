@@ -1,51 +1,24 @@
-import React from "react";
+import React from 'react';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 const SearchBar = ({ searchTerm, onSearchChange }) => {
-  const handleChange = (e) => {
-    onSearchChange(e.target.value);
-  };
-
-  const clearSearch = () => {
-    onSearchChange("");
-  };
-
   return (
-    <div className="mb-8">
-      <div className="max-w-md mx-auto relative">
-        <input
-          type="text"
-          placeholder="Search items by title, description, tags, or owner..."
-          value={searchTerm}
-          onChange={handleChange}
-          className="w-full px-4 py-3 pl-10 pr-10 text-gray-800 bg-white rounded-lg shadow-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-        
-        {/* Search Icon */}
-        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+    <div className="mb-8 w-full">
+      <div className="relative max-w-2xl mx-auto w-full">
+        <div className="relative">
+          {/* Search Icon */}
+          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          
+          {/* Search Input */}
+          <input
+            type="text"
+            placeholder="Search for items..."
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400 focus:bg-white transition-all duration-200"
+          />
         </div>
-
-        {/* Clear Button */}
-        {searchTerm && (
-          <button
-            onClick={clearSearch}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
       </div>
-      
-      {/* Search Results Count */}
-      {searchTerm && (
-        <p className="text-center text-gray-300 mt-2 text-sm">
-          Search results for "{searchTerm}"
-        </p>
-      )}
     </div>
   );
 };

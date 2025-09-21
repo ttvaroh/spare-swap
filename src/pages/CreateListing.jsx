@@ -109,8 +109,7 @@ const CreateListingPage = () => {
           owner_id: userId,
           owner:
             session.user.user_metadata?.name ||
-            session.user.email?.split("@")[0] ||
-            "Unknown",
+            session.user.email?.split("@")[0],
         },
       ]);
 
@@ -124,7 +123,6 @@ const CreateListingPage = () => {
       }
 
       if (insertError) throw insertError;
-      
       // Reset form
       setTitle("");
       setDescription("");
@@ -132,7 +130,9 @@ const CreateListingPage = () => {
       setImagePreview(null);
       setTags([]);
       setTagInput("");
+
       navigate(`/`);
+
     } catch (error) {
       console.error("❌ CAUGHT ERROR:");
       console.error("Full error object:", error);

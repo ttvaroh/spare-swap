@@ -7,6 +7,7 @@ const HomePage = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  
 
   // Filter items based on search term
   const filteredItems = useMemo(() => {
@@ -27,7 +28,8 @@ const HomePage = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from("listings")
-        .select("id, title, image, tags, owner, description");
+        .select("id, title, image, tags, owner, description, status")
+        .neq("status", "swapped");
 
       if (error) {
         console.error("Error fetching listings:", error);
@@ -38,6 +40,17 @@ const HomePage = () => {
     };
 
     fetchItems();
+
+    // Refresh data when user returns to this page
+    const handleFocus = () => {
+      fetchItems();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   return (

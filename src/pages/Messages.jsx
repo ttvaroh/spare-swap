@@ -16,6 +16,78 @@ const Messages = () => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  useEffect(() => {
+    if (!selectedRequest) return;
+  
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .eq("request_id", selectedRequest.id)
+        .order("created_at", { ascending: true });
+  
+      if (error) {
+        console.error("Error fetching messages:", error);
+      }
+      setMessages(data || []);
+    };
+  
+    // Set up real-time subscription FIRST
+    const subscription = supabase
+      .channel(`messages-${selectedRequest.id}-${Date.now()}`) // Unique channel name
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "messages",
+          filter: `request_id=eq.${selectedRequest.id}`,
+        },
+        (payload) => {
+          console.log("📨 Real-time message update:", payload);
+  
+          if (payload.eventType === "INSERT") {
+            setMessages((current) => [...current, payload.new]);
+          } else if (payload.eventType === "UPDATE") {
+            setMessages((current) =>
+              current.map((msg) =>
+                msg.id === payload.new.id ? payload.new : msg
+              )
+            );
+          } else if (payload.eventType === "DELETE") {
+            setMessages((current) =>
+              current.filter((msg) => msg.id !== payload.old.id)
+            );
+          }
+        }
+      )
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+        
+        // Only fetch messages after subscription is ready
+        if (status === 'SUBSCRIBED') {
+          fetchMessages();
+        }
+      });
+  
+    return () => {
+      console.log("🧹 Cleaning up real-time subscription");
+      supabase.removeChannel(subscription);
+    };
+  }, [selectedRequest]);
+
+  useEffect(() => {
+    if (!selectedRequest) return;
+  
+    const setupMessaging = async () => {
+      // Small delay to ensure clean state
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Rest of your subscription code...
+    };
+  
+    setupMessaging();
+  }, [selectedRequest]);
 
   useEffect(() => {
     scrollToBottom();
@@ -213,16 +285,16 @@ const Messages = () => {
     if (!selectedRequest || !userId) return;
 
     const confirmed = window.confirm(
-      'Are you sure you want to verify this swap? This will mark the listing as "Swapped" and cannot be undone.'
+      'Are you sure you want to verify this swap? This will mark the listing as "swapped", delete this request and all messages, and cannot be undone.'
     );
 
     if (!confirmed) return;
 
     try {
-      // Update the listing status to "Swapped"
+      // Update the listing status to "swapped"
       const { error: listingError } = await supabase
         .from("listings")
-        .update({ status: "Swapped" })
+        .update({ status: "swapped" })
         .eq("id", selectedRequest.listing_id);
 
       if (listingError) {
@@ -231,33 +303,98 @@ const Messages = () => {
         return;
       }
 
-      // Update the request status to "completed"
-      const { error: requestError } = await supabase
-        .from("requests")
-        .update({ status: "completed" })
-        .eq("id", selectedRequest.id);
+      // Delete all messages in this thread
+      const { error: messageError } = await supabase
+        .from("messages")
+        .delete()
+        .eq("request_id", selectedRequest.id);
 
-      if (requestError) {
-        console.error("Error updating request status:", requestError);
-        alert("Error updating request status. Please try again.");
+      if (messageError) {
+        console.error("Error deleting messages:", messageError);
+        alert("Error deleting messages. Please try again.");
         return;
       }
 
-      // Add a system message to the conversation
-      const { error: messageError } = await supabase.from("messages").insert([
-        {
-          request_id: selectedRequest.id,
-          sender_id: userId,
-          message: "Swap verified! The item has been marked as swapped.",
-        },
-      ]);
+      // Delete the request record entirely
+      const { error: requestError } = await supabase
+        .from("requests")
+        .delete()
+        .eq("id", selectedRequest.id);
 
-      if (messageError) {
-        console.error("Error adding system message:", messageError);
+      if (requestError) {
+        console.error("Error deleting request:", requestError);
+        alert("Error deleting request. Please try again.");
+        return;
       }
 
-      // Refresh the data to show updated status
-      window.location.reload();
+      // Clear the selected request and refresh the data
+      setSelectedRequest(null);
+      setMessages([]);
+
+      // Refresh the requests lists
+      const fetchRequests = async () => {
+        setLoading(true);
+
+        // First, let's see what listings you own
+        const { data: myListings, error: myListingsError } = await supabase
+          .from("listings")
+          .select("id, title")
+          .eq("owner_id", userId);
+
+        if (myListings && myListings.length > 0) {
+          const listingIds = myListings.map((l) => l.id);
+
+          // 1️⃣ Requests for listings you own
+          const { data: listingsData, error: listingsError } = await supabase
+            .from("requests")
+            .select(
+              `
+              id,
+              status,
+              listing_id,
+              requester_id,
+              listings (
+                id,
+                title,
+                owner_id
+              )
+            `
+            )
+            .in("listing_id", listingIds)
+            .order("created_at", { ascending: false });
+
+          setListingsRequests(listingsData || []);
+        } else {
+          setListingsRequests([]);
+        }
+
+        // 2️⃣ Requests you made to other listings
+        const { data: myReqData, error: myReqError } = await supabase
+          .from("requests")
+          .select(
+            `
+            id,
+            status,
+            listing_id,
+            requester_id,
+            listings (
+              id,
+              title,
+              owner_id
+            )
+          `
+          )
+          .eq("requester_id", userId)
+          .order("created_at", { ascending: false });
+
+        setMyRequests(myReqData || []);
+        setLoading(false);
+      };
+
+      await fetchRequests();
+
+      // Show success message
+      alert("Swap verified successfully! The request has been removed.");
     } catch (error) {
       console.error("Error verifying swap:", error);
       alert("Error verifying swap. Please try again.");
@@ -290,7 +427,7 @@ const Messages = () => {
                     key={req.id}
                     className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                       selectedRequest?.id === req.id
-                        ? "border-blue-500 bg-blue-50"
+                        ? "border-[#CFB991] bg-[#CFB991] bg-opacity-20"
                         : "border-gray-200 hover:bg-gray-100"
                     }`}
                     onClick={() => setSelectedRequest(req)}
@@ -327,7 +464,7 @@ const Messages = () => {
                     key={req.id}
                     className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                       selectedRequest?.id === req.id
-                        ? "border-blue-500 bg-blue-50"
+                        ? "border-[#CFB991] bg-[#CFB991] bg-opacity-20"
                         : "border-gray-200 hover:bg-gray-100"
                     }`}
                     onClick={() => setSelectedRequest(req)}
@@ -355,8 +492,8 @@ const Messages = () => {
         >
           {selectedRequest ? (
             <>
-                            {/* Header */}
-                            <div className="p-6 border-b border-gray-200">
+              {/* Header */}
+              <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-xl font-semibold">
@@ -399,7 +536,7 @@ const Messages = () => {
                       <div
                         className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                           msg.sender_id === userId
-                            ? "bg-blue-500 text-white"
+                            ? "bg-[#CFB991] text-gray-800"
                             : "bg-gray-200 text-gray-900"
                         }`}
                       >
@@ -407,7 +544,7 @@ const Messages = () => {
                         <div
                           className={`text-xs mt-1 ${
                             msg.sender_id === userId
-                              ? "text-blue-100"
+                              ? "text-gray-600"
                               : "text-gray-500"
                           }`}
                         >
@@ -446,14 +583,14 @@ const Messages = () => {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CFB991] focus:border-transparent"
                     placeholder="Type a message..."
                     disabled={!selectedRequest}
                   />
                   <button
                     onClick={sendMessage}
                     disabled={!newMessage.trim() || !selectedRequest}
-                    className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed px-6 py-3 rounded-lg font-semibold text-white transition-colors"
+                    className="bg-[#CFB991] hover:bg-[#b8a882] disabled:bg-gray-300 disabled:cursor-not-allowed px-6 py-3 rounded-lg font-semibold text-gray-800 transition-colors"
                   >
                     Send
                   </button>
